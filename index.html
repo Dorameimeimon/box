@@ -211,6 +211,11 @@
         card.href = l.url;
         card.target = "_blank";
         card.rel = "noopener noreferrer";
+        card.addEventListener("click", function(e){
+          e.preventDefault();
+          const w = window.open(l.url, "_blank");
+          if(!w){ window.location.href = l.url; }
+        });
 
         const avatar = l.emoji
           ? `<div class="avatar" style="background:${colorFor(l.name)}">${l.emoji}</div>`
