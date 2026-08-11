@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎁 百宝箱</title>
+<style>
+  :root{
+    --pink:#a0e7e5;
+    --mint:#7fd8c4;
+    --lav:#bfeaf0;
+    --peach:#c7f0e0;
+    --yellow:#d6f5ec;
+    --ink:#33534e;
+    --card:#fdfffe;
+    --shadow:0 8px 24px rgba(70,200,180,.20);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 12% 18%, #e6fbf6 0, transparent 45%),
+      radial-gradient(circle at 88% 12%, #e3f6ff 0, transparent 42%),
+      radial-gradient(circle at 75% 85%, #e9fff8 0, transparent 45%),
+      linear-gradient(135deg,#dffaf2 0%,#e3f6ff 50%,#dcfff4 100%);
+    background-attachment:fixed;
+    padding:32px 18px 80px;
+    overflow-x:hidden;
+  }
+  /* 飘浮的小气泡装饰 */
+  .bubble{position:fixed;border-radius:50%;opacity:.5;filter:blur(.5px);pointer-events:none;z-index:0;animation:float 9s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-26px)}}
+
+  .wrap{max-width:1080px;margin:0 auto;position:relative;z-index:1}
+
+  header{margin-bottom:28px}
+  .brand{display:flex;align-items:center;justify-content:center;gap:12px}
+  .mascot{font-size:52px;display:inline-block;animation:wobble 3.5s ease-in-out infinite;filter:drop-shadow(0 6px 10px rgba(60,190,170,.25))}
+  .mascot img{width:52px;height:52px;object-fit:contain;display:block}
+  @keyframes wobble{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+  h1{font-size:38px;letter-spacing:2px;margin:6px 0 4px;
+     background:linear-gradient(90deg,#3bb6a8,#5ed3c0,#2a9d8f);
+     -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:15px;color:#9a8a92}
+
+  .toolbar{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center;margin:22px 0 26px}
+  .search{flex:1;min-width:220px;max-width:420px;position:relative}
+  .search input{
+    width:100%;border:2px solid #bfeaf0;background:#fff;border-radius:30px;
+    padding:12px 18px 12px 42px;font-size:15px;color:var(--ink);outline:none;
+    box-shadow:var(--shadow);transition:.2s}
+  .search input:focus{border-color:#7fd8c4;box-shadow:0 8px 26px rgba(70,200,180,.3)}
+  .search .ico{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:17px}
+  .btn{
+    border:none;cursor:pointer;font-size:15px;font-weight:600;color:#fff;
+    padding:12px 22px;border-radius:30px;background:linear-gradient(135deg,#5ed3c0,#3bb6a8);
+    box-shadow:0 8px 20px rgba(60,190,170,.4);transition:transform .15s,box-shadow .15s}
+  .btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 12px 26px rgba(60,190,170,.5)}
+  .btn:active{transform:scale(.97)}
+  .btn.ghost{background:linear-gradient(135deg,#a0e7e5,#7fd8c4);box-shadow:0 8px 20px rgba(90,210,200,.4)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,220px);gap:18px;justify-content:center}
+  .card{
+    position:relative;background:var(--card);border-radius:22px;padding:20px 18px 18px;
+    box-shadow:var(--shadow);cursor:pointer;transition:transform .18s,box-shadow .18s;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:2px solid #fff;
+    width:220px;height:160px;animation:pop .35s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+  .card:hover{transform:translateY(-6px) rotate(-1deg);box-shadow:0 16px 34px rgba(60,190,170,.32);border-color:#c9f3ea}
+  .card:link,.card:visited,.card:hover,.card:active{color:#2a6fd6;text-decoration:none}
+  .avatar{
+    width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+    flex:none;font-size:32px;line-height:1;margin-bottom:12px;box-shadow:0 6px 14px rgba(0,0,0,.08)}
+  .avatar img{width:38px;height:38px;border-radius:10px}
+  .cname{font-size:16px;font-weight:700;margin-bottom:4px;word-break:break-word;line-height:1.3}
+  .curl{font-size:12px;color:#b0a0a8;word-break:break-all;line-height:1.4;max-width:100%}
+  .ctag{margin-top:10px;font-size:11px;background:#e6faf4;color:#2a9d8f;padding:3px 12px;border-radius:20px}
+  .del{
+    position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;border:none;
+    background:#c9f3ea;color:#2a9d8f;font-size:15px;cursor:pointer;opacity:0;transition:.2s;line-height:1}
+  .card:hover .del{opacity:1}
+  .del:hover{background:#2a9d8f;color:#fff;transform:scale(1.15)}
+
+  .empty{
+    grid-column:1/-1;text-align:center;padding:60px 20px;color:#7faaa1;
+    background:rgba(255,255,255,.55);border:2px dashed #bfeaf0;border-radius:26px}
+  .empty .big{font-size:60px;margin-bottom:12px;animation:wobble 3.5s ease-in-out infinite;display:inline-block}
+  .empty p{font-size:16px;line-height:1.7}
+
+  /* 弹窗 */
+  .overlay{position:fixed;inset:0;background:rgba(90,74,82,.35);backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .overlay.show{display:flex;animation:fade .2s}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .modal{background:#fffdfb;border-radius:26px;padding:28px 26px;width:100%;max-width:380px;
+    box-shadow:0 20px 50px rgba(60,190,170,.35);animation:pop .3s ease}
+  .modal h3{font-size:21px;margin-bottom:18px;text-align:center}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:13px;margin-bottom:6px;color:#5f8a82;font-weight:600}
+  .field input{border:2px solid #bfeaf0;border-radius:14px;padding:11px 14px;width:100%;font-size:15px;
+    outline:none;transition:.2s;color:var(--ink)}
+  .field input:focus{border-color:#7fd8c4}
+  .modal .row{display:flex;gap:10px;margin-top:20px}
+  .modal .row .btn{flex:1;text-align:center}
+  .hint{font-size:12px;color:#7faaa1;text-align:center;margin-top:10px}
+  footer{text-align:center;margin-top:40px;font-size:12px;color:#bcabae}
+</style>
+</head>
+<body>
+  <div class="bubble" style="width:90px;height:90px;background:#a0e7e5;left:6%;top:30%"></div>
+  <div class="bubble" style="width:60px;height:60px;background:#7fd8c4;left:92%;top:40%;animation-delay:1.5s"></div>
+  <div class="bubble" style="width:46px;height:46px;background:#bfeaf0;left:80%;top:70%;animation-delay:3s"></div>
+  <div class="bubble" style="width:70px;height:70px;background:#c7f0e0;left:3%;top:72%;animation-delay:2s"></div>
+
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="mascot">🎁</div>
+        <h1>百宝箱</h1>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <div class="search">
+        <span class="ico">🔍</span>
+        <input id="search" type="text" placeholder="搜索一下你的百宝箱…">
+      </div>
+      <button class="btn" id="addBtn">➕ 添加链接</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <!-- 添加弹窗 -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h3>✨ 收一个新宝贝</h3>
+      <div class="field">
+        <label>名称</label>
+        <input id="nameInput" type="text" placeholder="例如：我的邮箱">
+      </div>
+      <div class="field">
+        <label>链接</label>
+        <input id="urlInput" type="text" placeholder="https://...">
+      </div>
+      <div class="field">
+        <label>图标 emoji（可选）</label>
+        <input id="emojiInput" type="text" placeholder="📧 🛒 🎬 …留空自动取首字母">
+      </div>
+      <div class="field">
+        <label>分类（可选）</label>
+        <input id="tagInput" type="text" placeholder="如：常用 / 工具 / 娱乐">
+      </div>
+      <div class="row">
+        <button class="btn ghost" id="cancelBtn">取消</button>
+        <button class="btn" id="saveBtn">收下 💖</button>
+      </div>
+      <div class="hint">链接会自动补全 https://</div>
+    </div>
+  </div>
+
+<script>
+  const STORE_KEY = "baibaoxiang_links";
+  const PALETTE = ["#a0e7e5","#7fd8c4","#bfeaf0","#c7f0e0","#d6f5ec","#9be3d6","#b8ecf0","#a8e6cf"];
+
+  const SEED_LINKS = [
+    { name:"试驾勤奋度看板", url:"https://dorameimeimon.github.io/leapmotor-test-drive-dashboard/", emoji:"🚗", tag:"看板", imgOk:false },
+    { name:"四轮驱动看板", url:"https://dorameimeimon.github.io/leapmotor-south-dashboard/", emoji:"🚙", tag:"看板", imgOk:false },
+    { name:"重点城市商锁交占比", url:"https://dorameimeimon.github.io/lock-deliver/", emoji:"📊", tag:"看板", imgOk:false },
+    { name:"晨夕会", url:"https://dorameimeimon.github.io/leapmotor-poster/", emoji:"🌅", tag:"看板", imgOk:false },
+    { name:"门店潜客看板", url:"https://01e43646424c46049c0281f954b5d6d5.bj3.agentos-app.net/", emoji:"🏪", tag:"看板", imgOk:false },
+    { name:"3个10看板", url:"https://6671ccb5b5854a6fbddf0053123ca950.app.codebuddy.work/", emoji:"🔟", tag:"看板", imgOk:false },
+    { name:"打榜赛看板", url:"https://dorameimeimon.github.io/leapmotor-dabang-poster/", emoji:"🏆", tag:"看板", imgOk:false }
+  ];
+  let links = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+  if(!Array.isArray(links)){ links = SEED_LINKS.slice(); }
+
+  const grid = document.getElementById("grid");
+  const countEl = document.getElementById("count");
+  const searchEl = document.getElementById("search");
+
+  function getDomain(url){
+    try{ return new URL(url).hostname.replace(/^www\./,""); }
+    catch(e){ return ""; }
+  }
+  function colorFor(str){
+    let h=0; for(const c of str) h=(h*31+c.charCodeAt(0))>>>0;
+    return PALETTE[h % PALETTE.length];
+  }
+
+  function render(){
+    const q = searchEl.value.trim().toLowerCase();
+    const list = links.filter(l =>
+      !q || l.name.toLowerCase().includes(q) || (l.tag||"").toLowerCase().includes(q) || l.url.toLowerCase().includes(q)
+    );
+    grid.innerHTML = "";
+    if(links.length===0){
+      grid.innerHTML = `<div class="empty">
+        <div class="big">🌈</div>
+        <p>宝箱还是空的呢～<br>点上方「➕ 添加链接」放第一个宝贝进来吧！</p>
+      </div>`;
+    } else if(list.length===0){
+      grid.innerHTML = `<div class="empty"><div class="big">🔍</div><p>没有找到匹配的宝贝…</p></div>`;
+    } else {
+      list.forEach((l, i) => {
+        const realIdx = links.indexOf(l);
+        const card = document.createElement("a");
+        card.className = "card";
+        card.href = l.url;
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+
+        const avatar = l.emoji
+          ? `<div class="avatar" style="background:${colorFor(l.name)}">${l.emoji}</div>`
+          : (l.imgOk
+              ? `<div class="avatar" style="background:#fff"><img src="https://www.google.com/s2/favicons?domain=${getDomain(l.url)}&sz=64" onerror="this.parentNode.innerHTML='${l.name[0]||'🔗'}'"></div>`
+              : `<div class="avatar" style="background:${colorFor(l.name)}">${(l.name[0]||'🔗').toUpperCase()}</div>`);
+
+        card.innerHTML = `
+          ${avatar}
+          <div class="cname">${escapeHtml(l.name)}</div>
+          <div class="curl">${escapeHtml(getDomain(l.url)||l.url)}</div>`;
+        grid.appendChild(card);
+      });
+    }
+    countEl.textContent = links.length;
+  }
+
+  function escapeHtml(s){return (s||"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+  function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(links)); }
+
+  // 弹窗逻辑
+  const overlay = document.getElementById("overlay");
+  const nameInput = document.getElementById("nameInput");
+  const urlInput = document.getElementById("urlInput");
+  const emojiInput = document.getElementById("emojiInput");
+  const tagInput = document.getElementById("tagInput");
+
+  function openModal(){ overlay.classList.add("show"); nameInput.value="";urlInput.value="";emojiInput.value="";tagInput.value=""; nameInput.focus(); }
+  function closeModal(){ overlay.classList.remove("show"); }
+
+  document.getElementById("addBtn").onclick = openModal;
+  document.getElementById("cancelBtn").onclick = closeModal;
+  overlay.onclick = (e)=>{ if(e.target===overlay) closeModal(); };
+
+  document.getElementById("saveBtn").onclick = ()=>{
+    let name = nameInput.value.trim();
+    let url = urlInput.value.trim();
+    if(!url){ alert("请填写链接～"); return; }
+    if(!/^https?:\/\//i.test(url)) url = "https://" + url;
+    if(!name) name = getDomain(url) || url;
+    links.unshift({ name, url, emoji: emojiInput.value.trim(), tag: tagInput.value.trim(), imgOk:true });
+    save(); render(); closeModal();
+  };
+
+  searchEl.addEventListener("input", render);
+  // 回车快速添加
+  urlInput.addEventListener("keydown",e=>{ if(e.key==="Enter") document.getElementById("saveBtn").click(); });
+
+  render();
+</script>
+</body>
+</html>
