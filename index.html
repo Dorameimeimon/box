@@ -33,7 +33,7 @@
   .bubble{position:fixed;border-radius:50%;opacity:.5;filter:blur(.5px);pointer-events:none;z-index:0;animation:float 9s ease-in-out infinite}
   @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-26px)}}
 
-  .wrap{max-width:1240px;margin:0 auto;position:relative;z-index:1;padding:0 16px}
+  .wrap{max-width:1060px;margin:0 auto;position:relative;z-index:1;padding:0 16px}
 
   header{margin-bottom:28px}
   .brand{display:flex;align-items:center;justify-content:center;gap:12px}
@@ -61,14 +61,14 @@
   .btn:active{transform:scale(.97)}
   .btn.ghost{background:linear-gradient(135deg,#a0e7e5,#7fd8c4);box-shadow:0 8px 20px rgba(90,210,200,.4)}
 
-  .grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:22px;justify-content:center}
+  .grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;justify-content:center}
   @media (max-width:1024px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
   @media (max-width:600px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   .card{
-    position:relative;background:var(--card);border-radius:22px;padding:20px 18px 18px;
+    position:relative;background:var(--card);border-radius:20px;padding:16px 14px 14px;
     box-shadow:var(--shadow);cursor:pointer;transition:transform .18s,box-shadow .18s;
     display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:2px solid #fff;
-    min-height:168px;animation:pop .35s ease}
+    min-height:150px;animation:pop .35s ease}
   @keyframes pop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
   .card:hover{transform:translateY(-6px) rotate(-1deg);box-shadow:0 16px 34px rgba(60,190,170,.32);border-color:#c9f3ea}
   .card:link,.card:visited,.card:hover,.card:active{color:#2a6fd6;text-decoration:none}
